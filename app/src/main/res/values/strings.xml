@@ -2,7 +2,7 @@
     <string name="app_name">QQ红包</string>
     <string name="pref_open">抢红包</string>
     <string name="pref_amount">金额提示</string>
-    <string name="pref_we">自己发的不抢</string>
+    <string name="pref_self">自己发的不抢</string>
     <string name="pref_delay">延时抢红包</string>
     <string name="pref_delay_time">延时时长</string>
     <string name="delay_message">延迟0毫秒拆开红包</string>
@@ -35,10 +35,10 @@
         <item>没抢到自动回复</item>
         <item>抢到+没抢到自动回复</item>
     </string-array>
-    <string-array name="reply1">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
+    <string-array name="reply_entries">
+        <item>CLOSE</item>
+        <item>GOT</item>
+        <item>MISSED</item>
+        <item>ALL</item>
     </string-array>
 </resources>

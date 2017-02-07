@@ -15,8 +15,8 @@
         <SwitchPreference
             android:defaultValue="false"
             android:dependency="open"
-            android:key="we"
-            android:title="@string/pref_we" />
+            android:key="self"
+            android:title="@string/pref_self" />
 
         <ListPreference
             android:defaultValue="SEND"
@@ -27,10 +27,10 @@
             android:title="@string/password" />
 
         <ListPreference
-            android:defaultValue="0"
+            android:defaultValue="CLOSE"
             android:dependency="open"
             android:entries="@array/reply"
-            android:entryValues="@array/reply1"
+            android:entryValues="@array/reply_entries"
             android:key="reply"
             android:title="@string/reply" />
 

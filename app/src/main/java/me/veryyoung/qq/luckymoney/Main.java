@@ -42,6 +42,9 @@ import static me.veryyoung.qq.luckymoney.XposedUtils.findFieldByClassAndTypeAndN
 import static me.veryyoung.qq.luckymoney.XposedUtils.findResultByMethodNameAndReturnTypeAndParams;
 import static me.veryyoung.qq.luckymoney.enums.PasswordStatus.CLOSE;
 import static me.veryyoung.qq.luckymoney.enums.PasswordStatus.SEND;
+import static me.veryyoung.qq.luckymoney.enums.ReplyStatus.ALL;
+import static me.veryyoung.qq.luckymoney.enums.ReplyStatus.GOT;
+import static me.veryyoung.qq.luckymoney.enums.ReplyStatus.MISSED;
 
 
 public class Main implements IXposedHookLoadPackage {
@@ -91,7 +94,7 @@ public class Main implements IXposedHookLoadPackage {
                         String password = XposedHelpers.getObjectField(QQWalletTransferMsgElem, "title").toString();
                         Object messageParam = newInstance(findClass("com.tencent.mobileqq.activity.ChatActivityFacade$SendMsgParams", loadPackageParam.classLoader));
 
-                        if (selfuin.equals(senderuin) && PreferencesUtils.we()) {
+                        if (selfuin.equals(senderuin) && PreferencesUtils.self()) {
                             return;
                         }
 
@@ -161,7 +164,7 @@ public class Main implements IXposedHookLoadPackage {
                                 toast("自己的专享红包，抢到了" + amount + "元" + "\n" + "来自:" + name);
                             } else {
                                 toast("QQ红包帮你抢到了" + amount + "元" + "\n" + "来自:" + name);
-                                if (PreferencesUtils.reply() == 1 || PreferencesUtils.reply() == 3 && !TextUtils.isEmpty(PreferencesUtils.reply1())) {
+                                if (PreferencesUtils.reply() == GOT || PreferencesUtils.reply() == ALL && !TextUtils.isEmpty(PreferencesUtils.reply1())) {
                                     callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.reply1(), new ArrayList(), messageParam);
                                 }
                             }
@@ -172,7 +175,7 @@ public class Main implements IXposedHookLoadPackage {
                                 toast("别人的专享红包，抢不到" + "\n" + "来自:" + name);
                             } else {
                                 toast("没抢到" + "\n" + "来自:" + name);
-                                if (PreferencesUtils.reply() == 2 || PreferencesUtils.reply() == 3 && !TextUtils.isEmpty(PreferencesUtils.reply2())) {
+                                if (PreferencesUtils.reply() == MISSED || PreferencesUtils.reply() == ALL && !TextUtils.isEmpty(PreferencesUtils.reply2())) {
                                     callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.reply2(), new ArrayList(), messageParam);
                                 }
                             }
