@@ -39,12 +39,12 @@ public class PreferencesUtils {
         return ReplyStatus.valueOf(getInstance().getString("reply", "CLOSE"));
     }
 
-    public static String reply1() {
-        return getInstance().getString("reply1", "");
+    public static String gotReply() {
+        return getInstance().getString("got_reply", "");
     }
 
-    public static String reply2() {
-        return getInstance().getString("reply2", "");
+    public static String missedReply() {
+        return getInstance().getString("missed_reply", "");
     }
 
     public static String keywords() {

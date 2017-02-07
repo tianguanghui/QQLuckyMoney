@@ -36,15 +36,15 @@
 
         <EditTextPreference
             android:dependency="open"
-            android:hint="@string/reply1_hit"
-            android:key="reply1"
-            android:title="@string/reply1" />
+            android:hint="@string/got_reply_hit"
+            android:key="got_reply"
+            android:title="@string/got_reply" />
 
         <EditTextPreference
             android:dependency="open"
-            android:hint="@string/reply2_hit"
-            android:key="reply2"
-            android:title="@string/reply2" />
+            android:hint="@string/missed_reply_hit"
+            android:key="missed_reply"
+            android:title="@string/missed_reply" />
 
         <EditTextPreference
             android:dependency="open"

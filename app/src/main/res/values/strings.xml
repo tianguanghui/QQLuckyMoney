@@ -11,10 +11,10 @@
     <string name="desc">自动抢QQ红包</string>
     <string name="password">口令红包</string>
     <string name="reply">自动回复</string>
-    <string name="reply1">抢到自动回复语</string>
-    <string name="reply1_hit">请输入抢到自动回复语</string>
-    <string name="reply2">没抢到自动回复语</string>
-    <string name="reply2_hit">请输入没抢到自动回复语</string>
+    <string name="got_reply">抢到自动回复语</string>
+    <string name="got_reply_hit">请输入抢到自动回复语</string>
+    <string name="missed_reply">没抢到自动回复语</string>
+    <string name="missed_reply_hit">请输入没抢到自动回复语</string>
     <string name="keywords_hit">请输入关键词,多个关键词以,分隔</string>
     <string name="keywords">关键词不抢</string>
     <string name="group">指定群/人不抢</string>
