@@ -28,7 +28,6 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 import static android.os.SystemClock.sleep;
 import static android.widget.Toast.LENGTH_LONG;
-import static de.robv.android.xposed.XposedBridge.log;
 import static de.robv.android.xposed.XposedHelpers.callMethod;
 import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
@@ -59,7 +58,7 @@ public class Main implements IXposedHookLoadPackage {
     private static Object TroopManager;
     private static Object globalQQInterface = null;
     private static int n = 1;
-    private static String qqVersion = "";
+    private static int versionCode;
 
 
     private void dohook(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
@@ -76,7 +75,7 @@ public class Main implements IXposedHookLoadPackage {
                         msgUid = 0;
 
                         int messageType = (int) getObjectField(param.thisObject, "messageType");
-                        if (messageType == 6 && PreferencesUtils.password()==0) {
+                        if (messageType == 6 && PreferencesUtils.password() == 0) {
                             return;
                         }
 
@@ -90,7 +89,7 @@ public class Main implements IXposedHookLoadPackage {
                         String password = XposedHelpers.getObjectField(QQWalletTransferMsgElem, "title").toString();
                         Object messageParam = newInstance(findClass("com.tencent.mobileqq.activity.ChatActivityFacade$SendMsgParams", loadPackageParam.classLoader));
 
-                        if (selfuin.equals(senderuin) && PreferencesUtils.we()){
+                        if (selfuin.equals(senderuin) && PreferencesUtils.we()) {
                             return;
                         }
 
@@ -151,8 +150,8 @@ public class Main implements IXposedHookLoadPackage {
 
                         Bundle bundle = (Bundle) callMethod(pickObject, "a", hongbaoRequestUrl.toString());
                         JSONObject jsonobject = new JSONObject(callStaticMethod(qqplugin, "a", globalContext, random, callStaticMethod(qqplugin, "a", globalContext, bundle, new JSONObject())).toString());
-                        String name = ((String) jsonobject.getJSONObject("send_object").optString("send_name")) ;
-                        int state = ((int) jsonobject.optInt("state")) ;
+                        String name = ((String) jsonobject.getJSONObject("send_object").optString("send_name"));
+                        int state = ((int) jsonobject.optInt("state"));
 
                         if (state == 0) {
 
@@ -161,9 +160,9 @@ public class Main implements IXposedHookLoadPackage {
                                 toast("自己的专享红包，抢到了" + d + "元" + "\n" + "来自:" + name);
                             } else {
                                 toast("QQ红包帮你抢到了" + d + "元" + "\n" + "来自:" + name);
-                            if (PreferencesUtils.reply()==1 || PreferencesUtils.reply()==3  && !TextUtils.isEmpty(PreferencesUtils.reply1())) {
-                                callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.reply1(), new ArrayList(), messageParam);
-                            }
+                                if (PreferencesUtils.reply() == 1 || PreferencesUtils.reply() == 3 && !TextUtils.isEmpty(PreferencesUtils.reply1())) {
+                                    callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.reply1(), new ArrayList(), messageParam);
+                                }
                             }
 
                         } else if (state == 2) {
@@ -172,14 +171,14 @@ public class Main implements IXposedHookLoadPackage {
                                 toast("别人的专享红包，抢不到" + "\n" + "来自:" + name);
                             } else {
                                 toast("没抢到" + "\n" + "来自:" + name);
-                            if (PreferencesUtils.reply()==2 || PreferencesUtils.reply()==3  && !TextUtils.isEmpty(PreferencesUtils.reply2())) {
-                                callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.reply2(), new ArrayList(), messageParam);
-                            }
+                                if (PreferencesUtils.reply() == 2 || PreferencesUtils.reply() == 3 && !TextUtils.isEmpty(PreferencesUtils.reply2())) {
+                                    callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.reply2(), new ArrayList(), messageParam);
+                                }
                             }
 
                         }
 
-                        if (6 == messageType && PreferencesUtils.password()==1) {
+                        if (6 == messageType && PreferencesUtils.password() == 1) {
                             callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, password, new ArrayList(), messageParam);
                         }
                     }
@@ -300,13 +299,10 @@ public class Main implements IXposedHookLoadPackage {
     }
 
     private void initVersionCode(XC_LoadPackage.LoadPackageParam loadPackageParam) throws PackageManager.NameNotFoundException {
-        if (TextUtils.isEmpty(qqVersion)) {
+        if (0 != versionCode) {
             Context context = (Context) callMethod(callStaticMethod(findClass("android.app.ActivityThread", null), "currentActivityThread", new Object[0]), "getSystemContext", new Object[0]);
-            String versionName = context.getPackageManager().getPackageInfo(loadPackageParam.packageName, 0).versionName;
             int versionCode = context.getPackageManager().getPackageInfo(loadPackageParam.packageName, 0).versionCode;
-            log("Found QQ version:" + versionName);
-            log("Found QQ versionCode:" + versionCode);
-            qqVersion = versionName;
+            this.versionCode = versionCode;
             VersionParam.init(versionCode);
         }
     }
