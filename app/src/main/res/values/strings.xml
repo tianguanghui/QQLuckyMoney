@@ -24,10 +24,10 @@
         <item>发送口令</item>
         <item>不发送口令</item>
     </string-array>
-    <string-array name="password1">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
+    <string-array name="password_entries">
+        <item>CLOSE</item>
+        <item>SEND</item>
+        <item>DONOT_SEND</item>
     </string-array>
         <string-array name="reply">
         <item>关</item>

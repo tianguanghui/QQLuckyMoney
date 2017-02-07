@@ -2,6 +2,7 @@ package me.veryyoung.qq.luckymoney;
 
 
 import de.robv.android.xposed.XSharedPreferences;
+import me.veryyoung.qq.luckymoney.enums.PasswordStatus;
 
 public class PreferencesUtils {
 
@@ -22,14 +23,15 @@ public class PreferencesUtils {
     }
 
     public static boolean amount() {
-    	return getInstance().getBoolean("amount", true);
+        return getInstance().getBoolean("amount", true);
     }
 
     public static boolean we() {
         return getInstance().getBoolean("we", false);
     }
-    public static int password() {
-        return Integer.parseInt(getInstance().getString("password", "0"));
+
+    public static PasswordStatus password() {
+        return PasswordStatus.valueOf(getInstance().getString("password", "CLOSE"));
     }
 
     public static int reply() {

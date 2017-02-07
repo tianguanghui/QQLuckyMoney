@@ -40,6 +40,8 @@ import static java.lang.String.valueOf;
 import static me.veryyoung.qq.luckymoney.HideModule.hideModule;
 import static me.veryyoung.qq.luckymoney.XposedUtils.findFieldByClassAndTypeAndName;
 import static me.veryyoung.qq.luckymoney.XposedUtils.findResultByMethodNameAndReturnTypeAndParams;
+import static me.veryyoung.qq.luckymoney.enums.PasswordStatus.CLOSE;
+import static me.veryyoung.qq.luckymoney.enums.PasswordStatus.SEND;
 
 
 public class Main implements IXposedHookLoadPackage {
@@ -75,7 +77,7 @@ public class Main implements IXposedHookLoadPackage {
                         msgUid = 0;
 
                         int messageType = (int) getObjectField(param.thisObject, "messageType");
-                        if (messageType == 6 && PreferencesUtils.password() == 0) {
+                        if (messageType == 6 && PreferencesUtils.password() == CLOSE) {
                             return;
                         }
 
@@ -150,16 +152,15 @@ public class Main implements IXposedHookLoadPackage {
 
                         Bundle bundle = (Bundle) callMethod(pickObject, "a", hongbaoRequestUrl.toString());
                         JSONObject jsonobject = new JSONObject(callStaticMethod(qqplugin, "a", globalContext, random, callStaticMethod(qqplugin, "a", globalContext, bundle, new JSONObject())).toString());
-                        String name = ((String) jsonobject.getJSONObject("send_object").optString("send_name"));
-                        int state = ((int) jsonobject.optInt("state"));
+                        String name = jsonobject.getJSONObject("send_object").optString("send_name");
+                        int state = jsonobject.optInt("state");
 
                         if (state == 0) {
-
-                            double d = ((double) jsonobject.getJSONObject("recv_object").getInt("amount")) / 100.0d;
+                            double amount = ((double) jsonobject.getJSONObject("recv_object").getInt("amount")) / 100.0d;
                             if (messageType == 8) {
-                                toast("自己的专享红包，抢到了" + d + "元" + "\n" + "来自:" + name);
+                                toast("自己的专享红包，抢到了" + amount + "元" + "\n" + "来自:" + name);
                             } else {
-                                toast("QQ红包帮你抢到了" + d + "元" + "\n" + "来自:" + name);
+                                toast("QQ红包帮你抢到了" + amount + "元" + "\n" + "来自:" + name);
                                 if (PreferencesUtils.reply() == 1 || PreferencesUtils.reply() == 3 && !TextUtils.isEmpty(PreferencesUtils.reply1())) {
                                     callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.reply1(), new ArrayList(), messageParam);
                                 }
@@ -178,7 +179,7 @@ public class Main implements IXposedHookLoadPackage {
 
                         }
 
-                        if (6 == messageType && PreferencesUtils.password() == 1) {
+                        if (6 == messageType && PreferencesUtils.password() == SEND) {
                             callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, password, new ArrayList(), messageParam);
                         }
                     }
