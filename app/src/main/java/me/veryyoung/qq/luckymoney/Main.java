@@ -76,13 +76,47 @@ public class Main implements IXposedHookLoadPackage {
                         msgUid = 0;
 
                         int messageType = (int) getObjectField(param.thisObject, "messageType");
-                        if (messageType == 6 && !PreferencesUtils.password()) {
+                        if (messageType == 6 && PreferencesUtils.password()==0) {
                             return;
                         }
 
                         Object mQQWalletRedPacketMsg = getObjectField(param.thisObject, "mQQWalletRedPacketMsg");
                         String redPacketId = getObjectField(mQQWalletRedPacketMsg, "redPacketId").toString();
                         String authkey = (String) getObjectField(mQQWalletRedPacketMsg, "authkey");
+                        Object SessionInfo = newInstance(findClass("com.tencent.mobileqq.activity.aio.SessionInfo", loadPackageParam.classLoader));
+                        findFieldByClassAndTypeAndName(findClass("com.tencent.mobileqq.activity.aio.SessionInfo", loadPackageParam.classLoader), String.class, "a").set(SessionInfo, frienduin);
+                        findFieldByClassAndTypeAndName(findClass("com.tencent.mobileqq.activity.aio.SessionInfo", loadPackageParam.classLoader), Integer.TYPE, "a").setInt(SessionInfo, istroop);
+                        Object QQWalletTransferMsgElem = XposedHelpers.getObjectField(mQQWalletRedPacketMsg, "elem");
+                        String password = XposedHelpers.getObjectField(QQWalletTransferMsgElem, "title").toString();
+                        Object messageParam = newInstance(findClass("com.tencent.mobileqq.activity.ChatActivityFacade$SendMsgParams", loadPackageParam.classLoader));
+
+                        if (selfuin.equals(senderuin) && PreferencesUtils.we()){
+                            return;
+                        }
+
+                        if (messageType == 2 && istroop == 0) {
+                            return;
+                        }
+
+                        String group = PreferencesUtils.group();
+                        if (!TextUtils.isEmpty(group)) {
+                            for (String group1 : group.split(",")) {
+                                if (frienduin.equals(group1)) {
+                                    toast("指定群/人不抢");
+                                    return;
+                                }
+                            }
+                        }
+
+                        String keywords = PreferencesUtils.keywords();
+                        if (!TextUtils.isEmpty(keywords)) {
+                            for (String keywords1 : keywords.split(",")) {
+                                if (password.contains(keywords1)) {
+                                    toast("关键词不抢");
+                                    return;
+                                }
+                            }
+                        }
 
                         ClassLoader walletClassLoader = (ClassLoader) callStaticMethod(findClass("com.tencent.mobileqq.pluginsdk.PluginStatic", loadPackageParam.classLoader), "getOrCreateClassLoader", globalContext, "qwallet_plugin.apk");
                         StringBuffer requestUrl = new StringBuffer();
@@ -114,21 +148,38 @@ public class Main implements IXposedHookLoadPackage {
                         if (PreferencesUtils.delay()) {
                             sleep(PreferencesUtils.delayTime());
                         }
-                        try {
-                            Bundle bundle = (Bundle) callMethod(pickObject, "a", hongbaoRequestUrl.toString());
-                            double d = ((double) new JSONObject(callStaticMethod(qqplugin, "a", globalContext, random, callStaticMethod(qqplugin, "a", globalContext, bundle, new JSONObject())).toString()).getJSONObject("recv_object").getInt("amount")) / 100.0d;
-                            toast("QQ红包帮你抢到了" + d + "元");
-                        } catch (Exception e2) {
-                            toast("没抢到");
-                        }
-                        if (6 == messageType && PreferencesUtils.sendPassword()) {
-                            Object SessionInfo = newInstance(findClass("com.tencent.mobileqq.activity.aio.SessionInfo", loadPackageParam.classLoader));
-                            findFieldByClassAndTypeAndName(findClass("com.tencent.mobileqq.activity.aio.SessionInfo", loadPackageParam.classLoader), String.class, "a").set(SessionInfo, frienduin);
-                            findFieldByClassAndTypeAndName(findClass("com.tencent.mobileqq.activity.aio.SessionInfo", loadPackageParam.classLoader), Integer.TYPE, "a").setInt(SessionInfo, istroop);
-                            Object QQWalletTransferMsgElem = XposedHelpers.getObjectField(mQQWalletRedPacketMsg, "elem");
-                            String password = XposedHelpers.getObjectField(QQWalletTransferMsgElem, "title").toString();
 
-                            Object messageParam = newInstance(findClass("com.tencent.mobileqq.activity.ChatActivityFacade$SendMsgParams", loadPackageParam.classLoader));
+                        Bundle bundle = (Bundle) callMethod(pickObject, "a", hongbaoRequestUrl.toString());
+                        JSONObject jsonobject = new JSONObject(callStaticMethod(qqplugin, "a", globalContext, random, callStaticMethod(qqplugin, "a", globalContext, bundle, new JSONObject())).toString());
+                        String name = ((String) jsonobject.getJSONObject("send_object").optString("send_name")) ;
+                        int state = ((int) jsonobject.optInt("state")) ;
+
+                        if (state == 0) {
+
+                            double d = ((double) jsonobject.getJSONObject("recv_object").getInt("amount")) / 100.0d;
+                            if (messageType == 8) {
+                                toast("自己的专享红包，抢到了" + d + "元" + "\n" + "来自:" + name);
+                            } else {
+                                toast("QQ红包帮你抢到了" + d + "元" + "\n" + "来自:" + name);
+                            if (PreferencesUtils.reply()==1 || PreferencesUtils.reply()==3  && !TextUtils.isEmpty(PreferencesUtils.reply1())) {
+                                callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.reply1(), new ArrayList(), messageParam);
+                            }
+                            }
+
+                        } else if (state == 2) {
+
+                            if (messageType == 8) {
+                                toast("别人的专享红包，抢不到" + "\n" + "来自:" + name);
+                            } else {
+                                toast("没抢到" + "\n" + "来自:" + name);
+                            if (PreferencesUtils.reply()==2 || PreferencesUtils.reply()==3  && !TextUtils.isEmpty(PreferencesUtils.reply2())) {
+                                callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.reply2(), new ArrayList(), messageParam);
+                            }
+                            }
+
+                        }
+
+                        if (6 == messageType && PreferencesUtils.password()==1) {
                             callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, password, new ArrayList(), messageParam);
                         }
                     }
@@ -252,9 +303,11 @@ public class Main implements IXposedHookLoadPackage {
         if (TextUtils.isEmpty(qqVersion)) {
             Context context = (Context) callMethod(callStaticMethod(findClass("android.app.ActivityThread", null), "currentActivityThread", new Object[0]), "getSystemContext", new Object[0]);
             String versionName = context.getPackageManager().getPackageInfo(loadPackageParam.packageName, 0).versionName;
+            int versionCode = context.getPackageManager().getPackageInfo(loadPackageParam.packageName, 0).versionCode;
             log("Found QQ version:" + versionName);
+            log("Found QQ versionCode:" + versionCode);
             qqVersion = versionName;
-            VersionParam.init(versionName);
+            VersionParam.init(versionCode);
         }
     }
 
