@@ -55,6 +55,7 @@ public class Main implements IXposedHookLoadPackage {
     private static long msgUid;
     private static String senderuin;
     private static String frienduin;
+    private static String from;
     private static int istroop;
     private static String selfuin;
     private static Context globalContext;
@@ -95,10 +96,6 @@ public class Main implements IXposedHookLoadPackage {
                         Object messageParam = newInstance(findClass("com.tencent.mobileqq.activity.ChatActivityFacade$SendMsgParams", loadPackageParam.classLoader));
 
                         if (selfuin.equals(senderuin) && PreferencesUtils.self()) {
-                            return;
-                        }
-
-                        if (messageType == 2 && istroop == 0) {
                             return;
                         }
 
@@ -157,13 +154,20 @@ public class Main implements IXposedHookLoadPackage {
                         JSONObject jsonobject = new JSONObject(callStaticMethod(qqplugin, "a", globalContext, random, callStaticMethod(qqplugin, "a", globalContext, bundle, new JSONObject())).toString());
                         String name = jsonobject.getJSONObject("send_object").optString("send_name");
                         int state = jsonobject.optInt("state");
+                        if (istroop == 1) {
+                            from = "来自:" + name + "\n" + "来自群:" + getObjectField(findResultByMethodNameAndReturnTypeAndParams(TroopManager, "a", "com.tencent.mobileqq.data.TroopInfo", frienduin), "troopname");
+                        } else if (istroop == 5) {
+                            from = "来自:" + name + "\n" + "来自热聊:" + getObjectField(findResultByMethodNameAndReturnTypeAndParams(HotChatManager, "a", "com.tencent.mobileqq.data.HotChatInfo", frienduin), "name");
+                        } else {
+                            from = "来自:" + name;
+                        }
 
                         if (state == 0) {
                             double amount = ((double) jsonobject.getJSONObject("recv_object").getInt("amount")) / 100.0d;
                             if (messageType == 8) {
-                                toast("自己的专享红包，抢到了" + amount + "元" + "\n" + "来自:" + name);
+                                toast("自己的专享红包，抢到了" + amount + "元" + "\n" + from);
                             } else {
-                                toast("QQ红包帮你抢到了" + amount + "元" + "\n" + "来自:" + name);
+                                toast("QQ红包帮你抢到了" + amount + "元" + "\n" + from);
                                 if (PreferencesUtils.reply() == GOT || PreferencesUtils.reply() == ALL && !TextUtils.isEmpty(PreferencesUtils.gotReply())) {
                                     callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.gotReply(), new ArrayList(), messageParam);
                                 }
@@ -172,9 +176,9 @@ public class Main implements IXposedHookLoadPackage {
                         } else if (state == 2) {
 
                             if (messageType == 8) {
-                                toast("别人的专享红包，抢不到" + "\n" + "来自:" + name);
+                                toast("别人的专享红包，抢不到" + "\n" + from);
                             } else {
-                                toast("没抢到" + "\n" + "来自:" + name);
+                                toast("没抢到" + "\n" + from);
                                 if (PreferencesUtils.reply() == MISSED || PreferencesUtils.reply() == ALL && !TextUtils.isEmpty(PreferencesUtils.missedReply())) {
                                     callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.missedReply(), new ArrayList(), messageParam);
                                 }
