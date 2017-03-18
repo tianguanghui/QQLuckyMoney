@@ -133,7 +133,7 @@ public class Main implements IXposedHookLoadPackage {
                         StringBuffer requestUrl = new StringBuffer();
                         requestUrl.append("&uin=" + selfuin);
                         requestUrl.append("&listid=" + redPacketId);
-                        requestUrl.append("&name=" + Uri.encode(""));
+                        requestUrl.append("&name=" + Uri.encode((String)getObjectField(callMethod(FriendManager, "c", selfuin), "name")));
                         requestUrl.append("&answer=");
                         requestUrl.append("&groupid=" + (istroop == 0 ? selfuin : frienduin));
                         requestUrl.append("&grouptype=" + getGroupType());
