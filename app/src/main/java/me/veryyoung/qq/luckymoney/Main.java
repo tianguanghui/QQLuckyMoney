@@ -62,6 +62,9 @@ public class Main implements IXposedHookLoadPackage {
     private static Object HotChatManager;
     private static Object TicketManager;
     private static Object TroopManager;
+    private static Object DiscussionManager;
+    private static Object FriendManager;
+    private static Bundle bundle;
     private static Object globalQQInterface = null;
     private static int n = 1;
     private static int versionCode;
@@ -102,20 +105,27 @@ public class Main implements IXposedHookLoadPackage {
                         String group = PreferencesUtils.group();
                         if (!TextUtils.isEmpty(group)) {
                             for (String group1 : group.split(",")) {
-                                if (frienduin.equals(group1)) {
-                                    toast("指定群/人不抢");
-                                    return;
-                                }
-                            }
+                                 if (frienduin.equals(group1) || senderuin.equals(group1)) {
+                                     if(istroop == 1 && senderuin.equals(group1)) {
+                                        from = "指定人不抢" + "\n" + "来自群:" + getObjectField(findResultByMethodNameAndReturnTypeAndParams(TroopManager, "a", "com.tencent.mobileqq.data.TroopInfo", frienduin), "troopname") + "\n" + "来自:" + getObjectField(callMethod(FriendManager, "c", group1), "name");
+                                     } else if (istroop == 1) {
+                                        from = "指定群不抢" + "\n" + "来自群:" + getObjectField(findResultByMethodNameAndReturnTypeAndParams(TroopManager, "a", "com.tencent.mobileqq.data.TroopInfo", group1), "troopname");
+                                     } else {
+                                        from = "指定人不抢" + "\n" + "来自:" + getObjectField(callMethod(FriendManager, "c", group1), "name");
+                                     }
+                                     toast(from);
+                                     return;
+                                 }
+                           }
                         }
 
                         String keywords = PreferencesUtils.keywords();
                         if (!TextUtils.isEmpty(keywords)) {
                             for (String keywords1 : keywords.split(",")) {
-                                if (password.contains(keywords1)) {
-                                    toast("关键词不抢");
-                                    return;
-                                }
+                                 if (password.contains(keywords1)) {
+                                     toast("关键词不抢" + "\n" + "关键词:" + keywords1);
+                                     return;
+                                 }
                             }
                         }
 
@@ -123,7 +133,7 @@ public class Main implements IXposedHookLoadPackage {
                         StringBuffer requestUrl = new StringBuffer();
                         requestUrl.append("&uin=" + selfuin);
                         requestUrl.append("&listid=" + redPacketId);
-                        requestUrl.append("&name=" + Uri.encode(""));
+                        requestUrl.append("&name=" + Uri.encode((String)getObjectField(callMethod(FriendManager, "c", selfuin), "name")));
                         requestUrl.append("&answer=");
                         requestUrl.append("&groupid=" + (istroop == 0 ? selfuin : frienduin));
                         requestUrl.append("&grouptype=" + getGroupType());
@@ -150,7 +160,11 @@ public class Main implements IXposedHookLoadPackage {
                             sleep(PreferencesUtils.delayTime());
                         }
 
-                        Bundle bundle = (Bundle) callMethod(pickObject, "a", hongbaoRequestUrl.toString());
+                        try {
+                            bundle = (Bundle) callMethod(pickObject, "a", hongbaoRequestUrl.toString());
+                        } catch (Throwable T) {
+                            bundle = (Bundle) callMethod(pickObject, "b", hongbaoRequestUrl.toString());
+                        }
                         JSONObject jsonobject = new JSONObject(callStaticMethod(qqplugin, "a", globalContext, random, callStaticMethod(qqplugin, "a", globalContext, bundle, new JSONObject())).toString());
                         String name = jsonobject.getJSONObject("send_object").optString("send_name");
                         int state = jsonobject.optInt("state");
@@ -158,6 +172,8 @@ public class Main implements IXposedHookLoadPackage {
                             from = "来自:" + name + "\n" + "来自群:" + getObjectField(findResultByMethodNameAndReturnTypeAndParams(TroopManager, "a", "com.tencent.mobileqq.data.TroopInfo", frienduin), "troopname");
                         } else if (istroop == 5) {
                             from = "来自:" + name + "\n" + "来自热聊:" + getObjectField(findResultByMethodNameAndReturnTypeAndParams(HotChatManager, "a", "com.tencent.mobileqq.data.HotChatInfo", frienduin), "name");
+                        } else if (istroop == 3000) {
+                            from = "来自:" + name + "\n" + "来自讨论组:" + getObjectField(findResultByMethodNameAndReturnTypeAndParams(DiscussionManager, "a", "com.tencent.mobileqq.data.DiscussionInfo", frienduin), "discussionName");
                         } else {
                             from = "来自:" + name;
                         }
@@ -248,10 +264,22 @@ public class Main implements IXposedHookLoadPackage {
                 }
         );
 
-        XposedHelpers.findAndHookConstructor("com.tencent.mobileqq.app.TroopManager", loadPackageParam.classLoader, "com.tencent.mobileqq.app.QQAppInterface", new XC_MethodHook() {
+        findAndHookConstructor("com.tencent.mobileqq.app.TroopManager", loadPackageParam.classLoader, "com.tencent.mobileqq.app.QQAppInterface", new XC_MethodHook() {
             protected void afterHookedMethod(MethodHookParam methodHookParam) {
                 TroopManager = methodHookParam.thisObject;
             }
+        });
+
+         findAndHookConstructor("com.tencent.mobileqq.app.DiscussionManager", loadPackageParam.classLoader, "com.tencent.mobileqq.app.QQAppInterface", new XC_MethodHook() {
+             protected void afterHookedMethod(MethodHookParam methodHookParam) {
+                 DiscussionManager = methodHookParam.thisObject;
+             }
+        });
+
+         findAndHookConstructor("com.tencent.mobileqq.app.FriendsManager", loadPackageParam.classLoader, "com.tencent.mobileqq.app.QQAppInterface", new XC_MethodHook() {
+             protected void afterHookedMethod(MethodHookParam methodHookParam) {
+                 FriendManager = methodHookParam.thisObject;
+             }
         });
 
     }
