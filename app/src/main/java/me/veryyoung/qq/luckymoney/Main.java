@@ -154,17 +154,13 @@ public class Main implements IXposedHookLoadPackage {
                         hongbaoRequestUrl.append("&skey=" + callMethod(TicketManager, "getSkey", selfuin));
                         hongbaoRequestUrl.append("&msgno=" + generateNo(selfuin));
 
-                        Class<?> walletClass = findClass("com.tenpay.android.qqplugin.b.d", walletClassLoader);
+                        Class<?> walletClass = findClass(VersionParam.walletPluginClass, walletClassLoader);
                         Object pickObject = newInstance(walletClass, callStaticMethod(qqplugin, "a", globalContext));
                         if (PreferencesUtils.delay()) {
                             sleep(PreferencesUtils.delayTime());
                         }
 
-                        try {
-                            bundle = (Bundle) callMethod(pickObject, "a", hongbaoRequestUrl.toString());
-                        } catch (Throwable T) {
-                            bundle = (Bundle) callMethod(pickObject, "b", hongbaoRequestUrl.toString());
-                        }
+                        bundle = (Bundle) callMethod(pickObject, VersionParam.pickObject, hongbaoRequestUrl.toString());
                         JSONObject jsonobject = new JSONObject(callStaticMethod(qqplugin, "a", globalContext, random, callStaticMethod(qqplugin, "a", globalContext, bundle, new JSONObject())).toString());
                         String name = jsonobject.getJSONObject("send_object").optString("send_name");
                         int state = jsonobject.optInt("state");
@@ -180,22 +176,16 @@ public class Main implements IXposedHookLoadPackage {
 
                         if (state == 0) {
                             double amount = ((double) jsonobject.getJSONObject("recv_object").getInt("amount")) / 100.0d;
-                            if (messageType == 8) {
-                                toast("自己的专享红包，抢到了" + amount + "元" + "\n" + from);
-                            } else {
-                                toast("QQ红包帮你抢到了" + amount + "元" + "\n" + from);
-                                if (PreferencesUtils.reply() == GOT || PreferencesUtils.reply() == ALL && !TextUtils.isEmpty(PreferencesUtils.gotReply())) {
-                                    callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.gotReply(), new ArrayList(), messageParam);
-                                }
+                            toast("QQ红包帮你抢到了" + amount + "元" + "\n" + from);
+                            if (PreferencesUtils.reply() == GOT || PreferencesUtils.reply() == ALL && !TextUtils.isEmpty(PreferencesUtils.gotReply()) && messageType != 8) {
+                                callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.gotReply(), new ArrayList(), messageParam);
                             }
 
                         } else if (state == 2) {
 
-                            if (messageType == 8) {
-                                toast("别人的专享红包，抢不到" + "\n" + from);
-                            } else {
+                            if (messageType != 8) {
                                 toast("没抢到" + "\n" + from);
-                                if (PreferencesUtils.reply() == MISSED || PreferencesUtils.reply() == ALL && !TextUtils.isEmpty(PreferencesUtils.missedReply())) {
+                                if (PreferencesUtils.reply() == MISSED || PreferencesUtils.reply() == ALL && !TextUtils.isEmpty(PreferencesUtils.missedReply()) && messageType != 8) {
                                     callStaticMethod(findClass("com.tencent.mobileqq.activity.ChatActivityFacade", loadPackageParam.classLoader), "a", globalQQInterface, globalContext, SessionInfo, PreferencesUtils.missedReply(), new ArrayList(), messageParam);
                                 }
                             }
