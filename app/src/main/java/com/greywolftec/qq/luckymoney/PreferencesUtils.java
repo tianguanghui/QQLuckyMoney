@@ -1,9 +1,9 @@
-package me.veryyoung.qq.luckymoney;
+package com.greywolftec.qq.luckymoney;
 
 
 import de.robv.android.xposed.XSharedPreferences;
-import me.veryyoung.qq.luckymoney.enums.PasswordStatus;
-import me.veryyoung.qq.luckymoney.enums.ReplyStatus;
+import com.greywolftec.qq.luckymoney.enums.PasswordStatus;
+import com.greywolftec.qq.luckymoney.enums.ReplyStatus;
 
 public class PreferencesUtils {
 

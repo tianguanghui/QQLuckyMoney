@@ -1,4 +1,4 @@
-package me.veryyoung.qq.luckymoney;
+package com.greywolftec.qq.luckymoney;
 
 import android.app.ActivityManager;
 import android.content.pm.ApplicationInfo;

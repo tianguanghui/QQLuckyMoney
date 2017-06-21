@@ -1,4 +1,4 @@
-package me.veryyoung.qq.luckymoney.enums;
+package com.greywolftec.qq.luckymoney.enums;
 
 /**
  * Created by veryyoung on 2017/2/7.

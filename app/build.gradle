@@ -4,13 +4,13 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file("keystore/debug.keystore")
+            storeFile file("keystore/debug.jks")
             storePassword "password"
             keyAlias "veryyoung"
             keyPassword "password"
         }
         release {
-            storeFile file("keystore/release.keystore")
+            storeFile file("keystore/release.jks")
             storePassword "password"
             keyAlias "veryyoung"
             keyPassword "password"
@@ -20,7 +20,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion '25.0.0'
     defaultConfig {
-        applicationId "me.veryyoung.qq.luckymoney"
+        applicationId "com.greywolftec.qq.luckymoney"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 21
