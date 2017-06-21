@@ -16,5 +16,5 @@
 #   public *;
 #}
 
--keep class com.greywolftec.qq.luckymoney.* { *; }
+-keep class com.greywolf.qq.luckymoney.* { *; }
 -dontwarn okio.**

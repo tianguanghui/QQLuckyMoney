@@ -1,4 +1,4 @@
-package com.greywolftec.qq.luckymoney;
+package com.greywolf.qq.luckymoney;
 
 import android.app.Activity;
 import android.content.Context;
@@ -37,14 +37,14 @@ import static de.robv.android.xposed.XposedHelpers.findFirstFieldByExactType;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 import static de.robv.android.xposed.XposedHelpers.newInstance;
 import static java.lang.String.valueOf;
-import static com.greywolftec.qq.luckymoney.HideModule.hideModule;
-import static com.greywolftec.qq.luckymoney.XposedUtils.findFieldByClassAndTypeAndName;
-import static com.greywolftec.qq.luckymoney.XposedUtils.findResultByMethodNameAndReturnTypeAndParams;
-import static com.greywolftec.qq.luckymoney.enums.PasswordStatus.CLOSE;
-import static com.greywolftec.qq.luckymoney.enums.PasswordStatus.SEND;
-import static com.greywolftec.qq.luckymoney.enums.ReplyStatus.ALL;
-import static com.greywolftec.qq.luckymoney.enums.ReplyStatus.GOT;
-import static com.greywolftec.qq.luckymoney.enums.ReplyStatus.MISSED;
+import static com.greywolf.qq.luckymoney.HideModule.hideModule;
+import static com.greywolf.qq.luckymoney.XposedUtils.findFieldByClassAndTypeAndName;
+import static com.greywolf.qq.luckymoney.XposedUtils.findResultByMethodNameAndReturnTypeAndParams;
+import static com.greywolf.qq.luckymoney.enums.PasswordStatus.CLOSE;
+import static com.greywolf.qq.luckymoney.enums.PasswordStatus.SEND;
+import static com.greywolf.qq.luckymoney.enums.ReplyStatus.ALL;
+import static com.greywolf.qq.luckymoney.enums.ReplyStatus.GOT;
+import static com.greywolf.qq.luckymoney.enums.ReplyStatus.MISSED;
 
 
 public class Main implements IXposedHookLoadPackage {

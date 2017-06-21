@@ -1,4 +1,4 @@
-package com.greywolftec.qq.luckymoney;
+package com.greywolf.qq.luckymoney;
 
 public class VersionParam {
 

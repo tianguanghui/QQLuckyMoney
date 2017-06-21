@@ -1,4 +1,4 @@
-package com.greywolftec.qq.luckymoney;
+package com.greywolf.qq.luckymoney;
 
 import android.app.ActivityManager;
 import android.content.pm.ApplicationInfo;
@@ -14,7 +14,7 @@ import static de.robv.android.xposed.XposedBridge.log;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
 /**
- * Created by veryyoung on 2016/12/11.
+ * Created by greywolf on 2016/12/11.
  */
 
 public class HideModule {
@@ -127,6 +127,6 @@ public class HideModule {
     }
 
     private static boolean isTarget(String name) {
-        return name.contains("veryyoung") || name.contains("xposed");
+        return name.contains("greywolf") || name.contains("xposed");
     }
 }

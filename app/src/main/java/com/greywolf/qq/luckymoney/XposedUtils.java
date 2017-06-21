@@ -1,4 +1,4 @@
-package com.greywolftec.qq.luckymoney;
+package com.greywolf.qq.luckymoney;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -8,7 +8,7 @@ import static de.robv.android.xposed.XposedHelpers.getParameterTypes;
 
 
 /**
- * Created by veryyoung on 2017/1/7.
+ * Created by greywolf on 2017/1/7.
  */
 
 

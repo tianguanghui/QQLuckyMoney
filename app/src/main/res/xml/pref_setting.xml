@@ -64,7 +64,7 @@
             android:key="delay"
             android:title="@string/pref_delay" />
 
-        <com.greywolftec.qq.luckymoney.SeekBarPreference
+        <com.greywolf.qq.luckymoney.SeekBarPreference
             pref_kind="delay_time"
             android:defaultValue="true"
             android:dependency="delay"
